@@ -1,5 +1,4 @@
 import pygame
-import pygame.gfxdraw
 import random
 
 class Target(pygame.sprite.Sprite):
@@ -22,6 +21,8 @@ class Target(pygame.sprite.Sprite):
         self.rect.y = self.y
         self.growing = True
         self.shrinking = False
+        self.time_interval = 50
+        self.dt = 50
 
 
     def draw(self):
@@ -33,23 +34,26 @@ class Target(pygame.sprite.Sprite):
         
 
     def update(self):
-        if self.width < self.max_width and self.growing == True:
-            self.width += self.step
-            self.image = pygame.transform.scale(self.original_image, (self.width, self.width))
-            self.rect = self.image.get_rect()
-            self.rect.x, self.rect.y = self.x, self.y
-            #print(self.rect.center)
-        
-        elif self.width >= self.max_width:
-            self.growing = False
-            self.width -= self.step
-        
-        elif self.width < self.max_width and self.growing == False and self.width > 1:
-            self.width -= self.step
-            self.image = pygame.transform.scale(self.original_image, (self.width, self.width))
-            self.rect = self.image.get_rect()
-            self.rect.x, self.rect.y = self.x, self.y
+        self.current_time = pygame.time.get_ticks()
+        if self.current_time - self.dt > self.time_interval:
+            self.dt = self.current_time
+            if self.width < self.max_width and self.growing == True:
+                self.width += self.step
+                self.image = pygame.transform.scale(self.original_image, (self.width, self.width))
+                self.rect = self.image.get_rect()
+                self.rect.x, self.rect.y = self.x, self.y
+                #print(self.rect.center)
+            
+            elif self.width >= self.max_width:
+                self.growing = False
+                self.width -= self.step
+            
+            elif self.width < self.max_width and self.growing == False and self.width > 1:
+                self.width -= self.step
+                self.image = pygame.transform.scale(self.original_image, (self.width, self.width))
+                self.rect = self.image.get_rect()
+                self.rect.x, self.rect.y = self.x, self.y
 
-        else:
-            self.kill()
+            else:
+                self.kill()
             
